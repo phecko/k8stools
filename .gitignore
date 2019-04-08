@@ -1,0 +1,11 @@
+.DS_Store
+*.pyc
+spark-warehouse/*
+metastore_db/*
+*.log
+data/*
+.idea
+.python-version
+__pycache__/*
+kubeconfig/*
+
