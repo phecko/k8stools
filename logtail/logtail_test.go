@@ -1,20 +1,30 @@
 package logtail
 
 import (
-	"k8s.io/client-go/kubernetes/fake"
+	"sort"
 	"testing"
 )
 
-func TestPodLog(t *testing.T) {
+func TestLogLinesSort(t *testing.T) {
 
 
-	client := fake.NewSimpleClientset()
+	unsortLine := LogLines{
+		&LogLine{
+			Time: LogTimestamp("2019-04-08T12:25:45.321635324Z"),
+		},
+		&LogLine{
+			Time: LogTimestamp("2019-04-08T12:30:09.336397444Z"),
+		},
+		&LogLine{
+			Time: LogTimestamp("2019-04-08T12:24:09.336397444Z"),
+		},
+	}
 
-	namespace := "test"
 
-	testLogTail := NewLogTail().PodLogs(client, namespace)
+	sort.Sort(unsortLine)
 
-
-
+	if string(unsortLine[0].Time) != "2019-04-08T12:24:09.336397444Z" {
+		t.Fail()
+	}
 
 }

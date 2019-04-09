@@ -29,11 +29,11 @@ func main() {
 	}
 
 
-	namespace := "kube-system"
+	namespace := "default"
 
 	podId := "kubernetes-dashboard-57df4db6b-nm9dh"
 
-	deploymentId := "kubernetes-dashboard"
+	deploymentId := "zhijian-server-ucenter"
 
 	t := logtail.NewLogTail()
 
@@ -58,9 +58,9 @@ func main() {
 		fmt.Printf("Get Deployment Logs: %d \n", len(logs))
 	}
 
-	//for _, depLog := range logs{
-	//	fmt.Println(depLog.Time, depLog.Content)
-	//}
+	for _, depLog := range logs{
+		fmt.Println(depLog.Time, depLog.Content)
+	}
 	//fmt.Println(len(deplogs))
 
 }

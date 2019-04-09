@@ -29,7 +29,7 @@ func (self LogLines) Len() int {
 }
 
 func (self LogLines) Less(i, j int) bool {
-	 return self[i].Time < self[i].Time
+	return self[i].Time < self[j].Time
 }
 
 func (self LogLines) Swap(i, j int) {
@@ -97,6 +97,8 @@ func GetDeploymentLogs(client kubernetes.Interface, namespace , deploymentId str
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Printf("Get Pod %v \n", pods)
 
 	wg := new(sync.WaitGroup)
 	logChan := make(chan *LogLines)

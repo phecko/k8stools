@@ -9,7 +9,7 @@ import (
 var LimitBytes int64 = 5000000
 
 const (
-	RFC3339Nano = "2006-01-02T15:04:05.000000000Z"
+	RFC3339Nano = "2006-01-02T15:04:05.999999999Z"
 )
 
 type LogTailOption struct {
