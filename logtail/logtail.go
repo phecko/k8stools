@@ -3,9 +3,11 @@ package logtail
 import (
 	"bufio"
 	"fmt"
+	"errors"
 	"io"
 	v13 "k8s.io/api/core/v1"
 	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"sort"
 	"strings"
@@ -78,6 +80,26 @@ func GetPodContainers(client kubernetes.Interface, namespace , podId string) (*P
 	return containers, nil
 }
 
+func LabelSelectorToString(selector labels.Selector) (string, error) {
+
+	selectStr := []string{}
+
+	requirements, selectable := selector.Requirements()
+	if !selectable{
+		return "", errors.New("Selector cannot selectable")
+	}
+
+	for _, r:= range requirements{
+		selectStr = append(selectStr, r.String())
+	}
+
+	if len(selectStr) > 0 {
+		return strings.Join(selectStr, ","),nil
+	}
+	return "",nil
+
+}
+
 
 func GetDeploymentLogs(client kubernetes.Interface, namespace , deploymentId string, opt LogTailOption) (depLogs LogLines, err error){
 
@@ -87,11 +109,11 @@ func GetDeploymentLogs(client kubernetes.Interface, namespace , deploymentId str
 		return nil, err
 	}
 
-	labelSelector := ""
-	for key,value := range dep.Spec.Selector.MatchLabels{
-		labelSelector += fmt.Sprintf("%s=%s,", key, value)
+	selector := labels.SelectorFromSet(dep.Spec.Selector.MatchLabels)
+	labelSelector, err := LabelSelectorToString(selector)
+	if err != nil{
+		return nil,err
 	}
-	labelSelector = strings.Trim(labelSelector, ",")
 
 	pods, err := client.CoreV1().Pods(namespace).List(v12.ListOptions{LabelSelector:labelSelector})
 	if err != nil {
